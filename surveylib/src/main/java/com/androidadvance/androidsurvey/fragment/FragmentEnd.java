@@ -35,7 +35,7 @@ public class FragmentEnd extends Fragment {
             @Override
             public void onClick(View v) {
 
-                ((SurveyActivity) mContext).event_survey_completed(Answers.getInstance());
+                ((SurveyActivity) mContext).eventSurveyCompleted(Answers.getInstance());
 
             }
         });

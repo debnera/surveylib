@@ -4,12 +4,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class AdapterFragmentQ extends FragmentPagerAdapter {
-    private final ArrayList<Fragment> fragments;
+    private final List<Fragment> fragments;
 
-    public AdapterFragmentQ(FragmentManager fm, ArrayList<Fragment> fragments) {
+    public AdapterFragmentQ(FragmentManager fm, List<Fragment> fragments) {
         super(fm);
         this.fragments = fragments;
     }

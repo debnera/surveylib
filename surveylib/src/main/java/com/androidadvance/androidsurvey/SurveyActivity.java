@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.androidadvance.androidsurvey.adapters.AdapterFragmentQ;
@@ -22,127 +21,132 @@ import com.androidadvance.androidsurvey.models.SurveyPojo;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class SurveyActivity extends FragmentActivity {
 
-    private SurveyPojo mSurveyPojo;
-    private ViewPager mPager;
-    private String style_string = null;
+    private SurveyPojo surveyPojo;
+    private ViewPager viewPager;
+    private String style = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_survey);
-
-
-
         if (getIntent().getExtras() != null) {
-            Bundle bundle = getIntent().getExtras();
-            mSurveyPojo = new Gson().fromJson(bundle.getString("json_survey"), SurveyPojo.class);
-            if (bundle.containsKey("style")) {
-                style_string = bundle.getString("style");
-            }
+	        parseIntentExtras();
         }
-
-
-        Log.i("json Object = ", String.valueOf(mSurveyPojo.getQuestions()));
-
-        final ArrayList<Fragment> arraylist_fragments = new ArrayList<>();
-
-        //- START -
-        if (!mSurveyPojo.getSurveyProperties().getSkipIntro()) {
-            FragmentStart frag_start = new FragmentStart();
-            Bundle sBundle = new Bundle();
-            sBundle.putSerializable("survery_properties", mSurveyPojo.getSurveyProperties());
-            sBundle.putString("style", style_string);
-            frag_start.setArguments(sBundle);
-            arraylist_fragments.add(frag_start);
-        }
-
-        //- FILL -
-        for (Question mQuestion : mSurveyPojo.getQuestions()) {
-
-            if (mQuestion.getQuestionType().equals("String")) {
-                FragmentTextSimple frag = new FragmentTextSimple();
-                Bundle xBundle = new Bundle();
-                xBundle.putSerializable("data", mQuestion);
-                xBundle.putString("style", style_string);
-                frag.setArguments(xBundle);
-                arraylist_fragments.add(frag);
-            }
-
-            if (mQuestion.getQuestionType().equals("Checkboxes")) {
-                FragmentCheckboxes frag = new FragmentCheckboxes();
-                Bundle xBundle = new Bundle();
-                xBundle.putSerializable("data", mQuestion);
-                xBundle.putString("style", style_string);
-                frag.setArguments(xBundle);
-                arraylist_fragments.add(frag);
-            }
-
-            if (mQuestion.getQuestionType().equals("Radioboxes")) {
-                FragmentRadioboxes frag = new FragmentRadioboxes();
-                Bundle xBundle = new Bundle();
-                xBundle.putSerializable("data", mQuestion);
-                xBundle.putString("style", style_string);
-                frag.setArguments(xBundle);
-                arraylist_fragments.add(frag);
-            }
-
-            if (mQuestion.getQuestionType().equals("Number")) {
-                FragmentNumber frag = new FragmentNumber();
-                Bundle xBundle = new Bundle();
-                xBundle.putSerializable("data", mQuestion);
-                xBundle.putString("style", style_string);
-                frag.setArguments(xBundle);
-                arraylist_fragments.add(frag);
-            }
-
-            if (mQuestion.getQuestionType().equals("StringMultiline")) {
-                FragmentMultiline frag = new FragmentMultiline();
-                Bundle xBundle = new Bundle();
-                xBundle.putSerializable("data", mQuestion);
-                xBundle.putString("style", style_string);
-                frag.setArguments(xBundle);
-                arraylist_fragments.add(frag);
-            }
-
-        }
-
-        //- END -
-        FragmentEnd frag_end = new FragmentEnd();
-        Bundle eBundle = new Bundle();
-        eBundle.putSerializable("survery_properties", mSurveyPojo.getSurveyProperties());
-        eBundle.putString("style", style_string);
-        frag_end.setArguments(eBundle);
-        arraylist_fragments.add(frag_end);
-
-
-        mPager = (ViewPager) findViewById(R.id.pager);
-        AdapterFragmentQ mPagerAdapter = new AdapterFragmentQ(getSupportFragmentManager(), arraylist_fragments);
-        mPager.setAdapter(mPagerAdapter);
-
-
+        viewPager = (ViewPager) findViewById(R.id.pager);
+	    List<Fragment> questionFragments = parseSurveyFragments();
+        AdapterFragmentQ pagerAdapter = new AdapterFragmentQ(getSupportFragmentManager(), questionFragments);
+        viewPager.setAdapter(pagerAdapter);
     }
 
-    public void go_to_next() {
-        mPager.setCurrentItem(mPager.getCurrentItem() + 1);
+	public void goToNext() {
+		viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
+	}
+
+	@Override
+	public void onBackPressed() {
+		if (viewPager.getCurrentItem() == 0) {
+			super.onBackPressed();
+		} else {
+			viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
+		}
+	}
+
+	public void eventSurveyCompleted(Answers instance) {
+		Intent returnIntent = new Intent();
+		returnIntent.putExtra("answers", instance.get_json_object());
+		setResult(Activity.RESULT_OK, returnIntent);
+		finish();
+	}
+
+	private void parseIntentExtras() {
+		Bundle extras = getIntent().getExtras();
+		surveyPojo = new Gson().fromJson(extras.getString("json_survey"), SurveyPojo.class);
+		if (extras.containsKey("style")) {
+			style = extras.getString("style");
+		}
+	}
+
+    private List<Fragment> parseSurveyFragments() {
+	    ArrayList<Fragment> questionFragments = new ArrayList<>();
+		Bundle surveyProperties = parseProperties();
+
+	    // Intro
+	    if (!surveyPojo.getSurveyProperties().getSkipIntro()) {
+		    questionFragments.add(parseIntro(surveyProperties));
+	    }
+
+	    // Questions
+	    for (Question question : surveyPojo.getQuestions()) {
+		    Fragment fragment = parseQuestion(question);
+		    if (fragment != null) {
+			    questionFragments.add(fragment);
+		    }
+	    }
+
+	    // Outro
+	    questionFragments.add(parseEnd(surveyProperties));
+	    return questionFragments;
     }
 
+    private Bundle parseProperties() {
+	    Bundle bundle = new Bundle();
+	    bundle.putSerializable("survery_properties", surveyPojo.getSurveyProperties());
+	    bundle.putString("style", style);
+	    return bundle;
+    }
 
-    @Override
-    public void onBackPressed() {
-        if (mPager.getCurrentItem() == 0) {
-            super.onBackPressed();
-        } else {
-            mPager.setCurrentItem(mPager.getCurrentItem() - 1);
+	private Fragment parseIntro(Bundle properties) {
+		Fragment fragment = new FragmentStart();
+		fragment.setArguments(properties);
+		return fragment;
+	}
+
+	private Fragment parseEnd(Bundle properties) {
+		Fragment fragment = new FragmentEnd();
+		fragment.setArguments(properties);
+		return fragment;
+	}
+
+    private Fragment parseQuestion(Question question) {
+        Fragment fragment = getFragmentOfType(question.getQuestionType());
+        if (fragment != null) {
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("data", question);
+            bundle.putString("style", style);
+            fragment.setArguments(bundle);
+            return fragment;
+        }
+        else {
+            return null;
         }
     }
 
-    public void event_survey_completed(Answers instance) {
-        Intent returnIntent = new Intent();
-        returnIntent.putExtra("answers", instance.get_json_object());
-        setResult(Activity.RESULT_OK, returnIntent);
-        finish();
+    private Fragment getFragmentOfType(String type) {
+        Fragment fragment;
+        switch (type) {
+            case "String":
+                fragment = new FragmentTextSimple();
+                break;
+            case "Checkboxes":
+                fragment = new FragmentCheckboxes();
+                break;
+            case "Radioboxes":
+                fragment = new FragmentRadioboxes();
+                break;
+            case "Number":
+                fragment = new FragmentNumber();
+                break;
+            case "StringMultiline":
+                fragment = new FragmentMultiline();
+                break;
+            default:
+	            Log.e("SurveyLib", "Invalid fragment type: " + type);
+                fragment = null;
+        }
+        return fragment;
     }
 }

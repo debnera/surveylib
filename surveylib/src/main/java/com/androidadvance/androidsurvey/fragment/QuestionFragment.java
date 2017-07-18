@@ -28,7 +28,7 @@ abstract public class QuestionFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 	                         Bundle savedInstanceState) {
 		ViewGroup rootView = (ViewGroup) inflater.inflate(
-				R.layout.question_fragment, container, false);
+				R.layout.question, container, false);
 
 		questionContainer = (LinearLayout) rootView.findViewById(R.id.question_container);
 		title = (TextView) rootView.findViewById(R.id.question_title);

@@ -17,41 +17,41 @@ import com.androidadvance.androidsurvey.models.SurveyProperties;
 
 public class FragmentEnd extends Fragment {
 
-    private FragmentActivity mContext;
-    private TextView textView_end;
+    private FragmentActivity activity;
+    private TextView message;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(
-                R.layout.fragment_end, container, false);
+        		R.layout.startend, container, false);
 
-
-        Button button_finish = (Button) rootView.findViewById(R.id.button_finish);
-        textView_end = (TextView) rootView.findViewById(R.id.textView_end);
-
-
-        button_finish.setOnClickListener(new View.OnClickListener() {
+        Button finishButton = (Button) rootView.findViewById(R.id.button_continue);
+        message = (TextView) rootView.findViewById(R.id.textView_message);
+	    finishButton.setText(R.string.finish_button);
+        finishButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                ((SurveyActivity) mContext).eventSurveyCompleted(Answers.getInstance());
-
+                finishSurvey();
             }
         });
 
         return rootView;
     }
 
+    private void finishSurvey() {
+	    ((SurveyActivity) activity).eventSurveyCompleted(Answers.getInstance());
+    }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        mContext = getActivity();
-        SurveyProperties survery_properties = (SurveyProperties) getArguments().getSerializable("survery_properties");
+        activity = getActivity();
+        SurveyProperties surveryProperties = (SurveyProperties) getArguments().getSerializable("survey_properties");
 
-        assert survery_properties != null;
-        textView_end.setText(Html.fromHtml(survery_properties.getEndMessage()));
-
+        if (surveryProperties != null) {
+	        message.setText(Html.fromHtml(surveryProperties.getEndMessage()));
+        }
     }
 }

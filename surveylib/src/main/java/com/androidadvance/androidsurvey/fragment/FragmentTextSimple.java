@@ -1,6 +1,5 @@
 package com.androidadvance.androidsurvey.fragment;
 
-import android.text.InputType;
 
 public class FragmentTextSimple extends FragmentMultiline {
 	@Override

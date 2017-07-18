@@ -1,7 +1,9 @@
 <resources>
     <string name="app_name">AndroidSurvey</string>
-    <string name="xcontinue">Continue</string>
-    <string name="start">Start</string>
+
+    <string name="button">Button</string>
     <string name="close">Close</string>
-    <string name="finish">Finish</string>
+    <string name="finish_button">FINISH</string>
+    <string name="start_button">START</string>
+    <string name="continue_button">CONTINUE</string>
 </resources>

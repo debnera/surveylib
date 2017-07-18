@@ -17,21 +17,22 @@ import com.androidadvance.androidsurvey.models.SurveyProperties;
 
 public class FragmentStart extends Fragment {
 
-    private FragmentActivity mContext;
-    private TextView textView_start;
+    private FragmentActivity activity;
+    private TextView message;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(
-                R.layout.fragment_start, container, false);
+                R.layout.startend, container, false);
 
-        textView_start = (TextView) rootView.findViewById(R.id.textView_start);
-        Button button_continue = (Button) rootView.findViewById(R.id.button_continue);
-        button_continue.setOnClickListener(new View.OnClickListener() {
+        message = (TextView) rootView.findViewById(R.id.textView_message);
+        Button continueButton = (Button) rootView.findViewById(R.id.button_continue);
+	    continueButton.setText(R.string.start_button);
+        continueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((SurveyActivity) mContext).goToNext();
+                ((SurveyActivity) activity).goToNext();
             }
         });
 
@@ -42,11 +43,11 @@ public class FragmentStart extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        mContext = getActivity();
-        SurveyProperties survery_properties = (SurveyProperties) getArguments().getSerializable("survery_properties");
+        activity = getActivity();
+        SurveyProperties surveyProperties = (SurveyProperties) getArguments().getSerializable("survey_properties");
 
-        assert survery_properties != null;
-        textView_start.setText(Html.fromHtml(survery_properties.getIntroMessage()));
+        assert surveyProperties != null;
+        message.setText(Html.fromHtml(surveyProperties.getIntroMessage()));
 
 
 

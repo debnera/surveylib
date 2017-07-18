@@ -94,7 +94,7 @@ public class SurveyActivity extends FragmentActivity {
 
     private Bundle parseProperties() {
 	    Bundle bundle = new Bundle();
-	    bundle.putSerializable("survery_properties", surveyPojo.getSurveyProperties());
+	    bundle.putSerializable("survey_properties", surveyPojo.getSurveyProperties());
 	    bundle.putString("style", style);
 	    return bundle;
     }

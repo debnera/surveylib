@@ -3,19 +3,14 @@ package com.androidadvance.androidsurvey.fragment;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.text.Html;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.androidadvance.androidsurvey.Answers;
 import com.androidadvance.androidsurvey.models.Question;
-
-import java.util.ArrayList;
 
 public class FragmentRadioboxes extends QuestionFragment {
 

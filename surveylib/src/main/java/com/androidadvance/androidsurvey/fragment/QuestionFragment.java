@@ -19,8 +19,8 @@ import com.androidadvance.androidsurvey.SurveyActivity;
  */
 
 abstract public class QuestionFragment extends Fragment {
-	private FragmentActivity activity;
-	private TextView title;
+	FragmentActivity activity;
+	TextView title;
 	Button continueButton;
 	LinearLayout questionContainer;
 
@@ -49,7 +49,8 @@ abstract public class QuestionFragment extends Fragment {
 		activity = getActivity();
 		getData(getArguments());
 		createQuestionContent();
-		setTitle();
+		setTitle(getTitle());
+		updateContinueButtonVisibility();
 	}
 
 	private void continueAction() {
@@ -57,11 +58,26 @@ abstract public class QuestionFragment extends Fragment {
 		((SurveyActivity) activity).goToNext();
 	}
 
+	private void setTitle(String value) {
+		title.setText(value);
+	}
+
+	void updateContinueButtonVisibility() {
+		if (isContinueButtonVisible()) {
+			continueButton.setVisibility(View.VISIBLE);
+		}
+		else {
+			continueButton.setVisibility(View.INVISIBLE);
+		}
+	}
+
+	abstract public boolean isContinueButtonVisible();
+
 	abstract public void createQuestionContent();
 
 	abstract public void getData(Bundle arguments);
 
-	abstract public void setTitle();
+	abstract public String getTitle();
 
 	abstract public void saveAnswer();
 }

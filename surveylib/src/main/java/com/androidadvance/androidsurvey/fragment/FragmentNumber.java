@@ -21,7 +21,14 @@ import com.androidadvance.androidsurvey.R;
 import com.androidadvance.androidsurvey.SurveyActivity;
 import com.androidadvance.androidsurvey.models.Question;
 
-public class FragmentNumber extends Fragment {
+public class FragmentNumber extends FragmentMultiline {
+    @Override
+    public void createQuestionContent() {
+        super.createQuestionContent();
+        answerView.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+    }
+}
+    /*
 
     private FragmentActivity mContext;
     private Button button_continue;
@@ -85,3 +92,4 @@ public class FragmentNumber extends Fragment {
 
     }
 }
+    */

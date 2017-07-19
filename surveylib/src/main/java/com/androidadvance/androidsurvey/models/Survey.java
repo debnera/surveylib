@@ -7,7 +7,7 @@ import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class SurveyPojo implements Serializable {
+public class Survey implements Serializable {
 
     @SerializedName("survey_properties")
     @Expose

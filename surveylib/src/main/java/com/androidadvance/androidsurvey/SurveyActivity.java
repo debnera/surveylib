@@ -17,7 +17,7 @@ import com.androidadvance.androidsurvey.fragment.FragmentRadioboxes;
 import com.androidadvance.androidsurvey.fragment.FragmentStart;
 import com.androidadvance.androidsurvey.fragment.FragmentTextSimple;
 import com.androidadvance.androidsurvey.models.Question;
-import com.androidadvance.androidsurvey.models.SurveyPojo;
+import com.androidadvance.androidsurvey.models.Survey;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ import java.util.List;
 
 public class SurveyActivity extends FragmentActivity {
 
-    private SurveyPojo surveyPojo;
+    private Survey survey;
     private ViewPager viewPager;
     private String style = null;
 
@@ -64,7 +64,7 @@ public class SurveyActivity extends FragmentActivity {
 
 	private void parseIntentExtras() {
 		Bundle extras = getIntent().getExtras();
-		surveyPojo = new Gson().fromJson(extras.getString("json_survey"), SurveyPojo.class);
+		survey = new Gson().fromJson(extras.getString("json_survey"), Survey.class);
 		if (extras.containsKey("style")) {
 			style = extras.getString("style");
 		}
@@ -75,12 +75,12 @@ public class SurveyActivity extends FragmentActivity {
 		Bundle surveyProperties = parseProperties();
 
 	    // Intro
-	    if (!surveyPojo.getSurveyProperties().getSkipIntro()) {
+	    if (!survey.getSurveyProperties().getSkipIntro()) {
 		    questionFragments.add(parseIntro(surveyProperties));
 	    }
 
 	    // Questions
-	    for (Question question : surveyPojo.getQuestions()) {
+	    for (Question question : survey.getQuestions()) {
 		    Fragment fragment = parseQuestion(question);
 		    if (fragment != null) {
 			    questionFragments.add(fragment);
@@ -94,7 +94,7 @@ public class SurveyActivity extends FragmentActivity {
 
     private Bundle parseProperties() {
 	    Bundle bundle = new Bundle();
-	    bundle.putSerializable("survey_properties", surveyPojo.getSurveyProperties());
+	    bundle.putSerializable("survey_properties", survey.getSurveyProperties());
 	    bundle.putString("style", style);
 	    return bundle;
     }
